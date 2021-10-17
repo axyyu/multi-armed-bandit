@@ -1,0 +1,24 @@
+{
+  "name": "mab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "mab",
+  "author": "Andrew Wang",
+  "keywords": [
+    "gatsby"
+  ],
+  "scripts": {
+    "develop": "gatsby develop",
+    "start": "gatsby develop",
+    "build": "gatsby build",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean"
+  },
+  "dependencies": {
+    "gatsby": "^3.14.2",
+    "gatsby-plugin-sass": "^4.14.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "sass": "^1.43.2"
+  }
+}
