@@ -15,10 +15,14 @@
     "clean": "gatsby clean"
   },
   "dependencies": {
+    "chart.js": "^3.5.1",
     "gatsby": "^3.14.2",
     "gatsby-plugin-sass": "^4.14.0",
+    "prob.js": "^1.0.6",
     "react": "^17.0.1",
+    "react-chartjs-2": "^3.1.0",
     "react-dom": "^17.0.1",
+    "react-google-charts": "^3.0.15",
     "sass": "^1.43.2"
   }
 }
