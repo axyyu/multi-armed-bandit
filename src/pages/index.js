@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Prob from "prob.js";
 import { Bar } from "react-chartjs-2";
+import Chart from "react-google-charts";
 
 import "../styles/style.scss";
 
@@ -63,6 +64,7 @@ const IndexPage = () => {
 
   return (
     <main>
+      <h1>Multi-armed Bandit</h1>
       <h2>Remaining Moves: {budget}</h2>
       <h2>Reward: {reward.toFixed(5)}</h2>
       <div className="row">
@@ -71,7 +73,7 @@ const IndexPage = () => {
           return (
             <div key={index} className="arm">
               <h1>Arm {index}</h1>
-              {/* <Chart
+              <Chart
                 height={"400px"}
                 width={"400px"}
                 chartType="Histogram"
@@ -82,7 +84,7 @@ const IndexPage = () => {
                   colors: [COLORS[index]],
                 }}
                 rootProps={{ "data-testid": { index } }}
-              /> */}
+              />
 
               <button onClick={() => move(index)}>Choose Arm {index}</button>
             </div>
