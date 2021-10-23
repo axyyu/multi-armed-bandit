@@ -1,13 +1,9 @@
-import React, { useEffect, useState } from "react";
-import Prob from "prob.js";
-import { Bar } from "react-chartjs-2";
-import Chart from "react-google-charts";
-
+import React, { useState } from "react";
 import "../styles/style.scss";
+import Game from "../components/Game";
 
 const K = 3;
-const DEFAULT_BUDGET = 10;
-const DEFAULT_REWARD = 0;
+const DEFAULT_BUDGET = 100;
 
 const COLORS = [
   "f72585",
@@ -24,73 +20,45 @@ const COLORS = [
 
 const IndexPage = () => {
   const [budget, setBudget] = useState(DEFAULT_BUDGET);
-  const [reward, setReward] = useState(DEFAULT_REWARD);
-  const [arms, setArms] = useState([]);
+  const [numArms, setNumArms] = useState(K);
+  const [playing, setPlaying] = useState(false);
 
-  const U = Prob.uniform(0, 1);
-
-  function reset() {
-    setBudget(DEFAULT_BUDGET);
-    setReward(DEFAULT_REWARD);
-
-    const newArms = [];
-    for (let i = 0; i < K; i++) {
-      newArms.push({
-        mean: U(),
-        stdDev: U(),
-        history: [],
-      });
-    }
-    setArms(newArms);
-  }
-
-  function move(arm) {
-    const { mean, stdDev, history } = arms[arm];
-    const G = Prob.normal(mean, stdDev);
-    const value = G();
-
-    setBudget(budget - 1);
-    setReward(reward + value);
-
-    const newArms = JSON.parse(JSON.stringify(arms));
-    newArms[arm].history = [...history, [value]];
-    console.log(newArms);
-    setArms(newArms);
-  }
-
-  useEffect(() => {
-    reset();
-  }, []);
+  const reset = () => {
+    setPlaying(false);
+  };
 
   return (
     <main>
-      <h1>Multi-armed Bandit</h1>
-      <h2>Remaining Moves: {budget}</h2>
-      <h2>Reward: {reward.toFixed(5)}</h2>
-      <div className="row">
-        {arms.map((arm, index) => {
-          console.log([["Reward"], ...arm.history]);
-          return (
-            <div key={index} className="arm">
-              <h1>Arm {index}</h1>
-              <Chart
-                height={"400px"}
-                width={"400px"}
-                chartType="Histogram"
-                loader={<div>Loading Chart</div>}
-                data={[["Reward"], ...arm.history]}
-                options={{
-                  legend: { position: "none" },
-                  colors: [COLORS[index]],
-                }}
-                rootProps={{ "data-testid": { index } }}
-              />
-
-              <button onClick={() => move(index)}>Choose Arm {index}</button>
-            </div>
-          );
-        })}
-      </div>
+      {playing ? (
+        <Game initialBudget={budget} numArms={numArms} reset={reset} />
+      ) : (
+        <div className="container">
+          <h1>Multi-armed Bandit</h1>
+          <div className="input-row">
+            <h2>Budget</h2>
+            <input
+              type="number"
+              min="1"
+              max="1000"
+              value={budget}
+              step="1"
+              onChange={(event) => setBudget(event.target.value)}
+            />
+          </div>
+          <div className="input-row">
+            <h2>Number of Arms</h2>
+            <input
+              type="number"
+              min="1"
+              max="20"
+              value={numArms}
+              step="1"
+              onChange={(event) => setNumArms(event.target.value)}
+            />
+          </div>
+          <button onClick={() => setPlaying(true)}>Start Game</button>
+        </div>
+      )}
     </main>
   );
 };

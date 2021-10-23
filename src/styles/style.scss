@@ -11,7 +11,7 @@ $c9: #4895ef;
 $c10: #4cc9f0;
 
 $black: #1a181f;
-$white: #f4faff;
+$white: #ffffff;
 
 * {
   font-family: "Source Sans Pro", sans-serif;
@@ -20,9 +20,16 @@ $white: #f4faff;
 
 html {
   color: $black;
+  background: $white;
 }
 
 body {
+  padding: 32px;
+  margin: auto;
+}
+
+.container {
+  max-width: 1024px;
   padding: 32px;
   margin: auto;
 }
@@ -35,28 +42,40 @@ h5 {
   font-weight: 200;
 }
 
+input {
+  border: 1px solid $c10;
+  border-radius: 8px;
+
+  padding: 16px 8px;
+  background-color: lightgray;
+
+  font-size: 16px;
+  width: 200px;
+  margin-bottom: 16px;
+}
+
 .row {
   display: flex;
+  justify-content: flex-start;
   flex-direction: row;
-  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .arm {
-  flex: 1;
   display: flex;
   flex-direction: column;
   text-align: center;
   align-items: center;
-  padding: 32px;
-  border: 2px solid $c10;
+  margin: 32px;
+  padding: 16px;
+}
 
-  button {
-    background: $c10;
-    border-radius: 16px;
-    padding: 16px 32px;
-    font-size: 18px;
-    border: none;
-
-    cursor: pointer;
-  }
+button {
+  background: $c10;
+  border-radius: 16px;
+  padding: 16px 32px;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+  margin: 16px 0;
 }
