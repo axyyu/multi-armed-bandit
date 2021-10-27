@@ -3,7 +3,7 @@ import "../styles/style.scss";
 import Game from "../components/Game";
 
 const K = 3;
-const DEFAULT_BUDGET = 100;
+const DEFAULT_BUDGET = 10;
 
 const COLORS = [
   "f72585",
@@ -21,7 +21,7 @@ const COLORS = [
 const IndexPage = () => {
   const [budget, setBudget] = useState(DEFAULT_BUDGET);
   const [numArms, setNumArms] = useState(K);
-  const [playing, setPlaying] = useState(false);
+  const [playing, setPlaying] = useState(true);
 
   const reset = () => {
     setPlaying(false);
