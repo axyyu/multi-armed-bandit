@@ -1,23 +1,8 @@
-from flask import jsonify, render_template, request, session
-import pickle
+from flask import jsonify, render_template, request
 from server.algorithms import NoObserveSystem, ObserveSystem, SystemTypes
 
 from .db import db
 from .models.Score import Score
-
-"""
-Helper Functions
-"""
-
-
-# def _clear_game():
-#     session.pop('game', None)
-#     session.pop('gameType', None)
-
-
-# def _save_game(system):
-#     session['game'] = pickle.dump(system)
-
 
 """
 Controllers
@@ -33,29 +18,24 @@ def start():
     Start game
     """
     req = request.get_json()
-    game_type = SystemTypes[req['gameType']]
-    num_arms = req['num_arms']
-    num_interactions = req['num_interactions']
-
-    # _clear_game()
+    game_type = SystemTypes(req['gameType'])
+    num_arms = req['numArms']
+    num_interactions = req['numInteractions']
 
     game = None
-    if(game_type == SystemTypes.BASE):
-        # session['gameType'] = 'BASE'
-        pass
-    elif(game_type == SystemTypes.OBSERVE):
-        # session['gameType'] = 'OBSERVE'
+    recommend = None
+    if(game_type == SystemTypes.OBSERVE):
         system = ObserveSystem(num_arms, num_interactions)
-        # _save_game(system)
-        game = pickle.dump(system)
+        recommend = system.recommend()
+        game = system.serialize()
     elif(game_type == SystemTypes.NO_OBSERVE):
-        # session['gameType'] = 'NO_OBSERVE'
         system = NoObserveSystem(num_arms, num_interactions)
-        # _save_game(system)
-        game = pickle.dump(system)
+        recommend = system.recommend()
+        game = system.serialize()
 
     return jsonify({
-        'game': game
+        'game': game,
+        'recommend': recommend
     })
 
 
@@ -66,15 +46,24 @@ def recommend():
 
     req = request.get_json()
 
-    game_type = SystemTypes[req['gameType']]
+    game_type = SystemTypes(req['gameType'])
+    game = req['game']
 
-    if game_type == SystemTypes.OBSERVE or game_type == SystemTypes.NO_OBSERVE:
-        game = req['game']
-        system = pickle.loads(game)
+    recommend = None
 
-        return system.recommend()
+    if game_type == SystemTypes.OBSERVE:
+        system = ObserveSystem.deserialize(game)
+        recommend = system.recommend()
+        game = system.serialize()
+    elif game_type == SystemTypes.NO_OBSERVE:
+        system = NoObserveSystem.deserialize(game)
+        recommend = system.recommend()
+        game = system.serialize()
 
-    return False
+    return jsonify({
+        'game': game,
+        'recommend': recommend
+    })
 
 
 def record():
@@ -83,20 +72,29 @@ def record():
     """
     req = request.get_json()
 
-    game_type = SystemTypes[req['gameType']]
+    game_type = SystemTypes(req['gameType'])
     game = req['game']
-    system = pickle.loads(game)
-
     arm_id = req['armId']
     decision = req['decision']
 
+    recommend = None
+
     if game_type == SystemTypes.OBSERVE:
+        system = ObserveSystem.deserialize(game)
         reward = req['reward']
         system.get_user_response(arm_id, decision, reward)
+        recommend = system.recommend()
+        game = system.serialize()
     elif game_type == SystemTypes.NO_OBSERVE:
+        system = NoObserveSystem.deserialize(game)
         system.get_user_response(arm_id, decision)
+        recommend = system.recommend()
+        game = system.serialize()
 
-    return True
+    return jsonify({
+        'game': game,
+        'recommend': recommend
+    })
 
 
 def score():

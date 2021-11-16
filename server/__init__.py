@@ -2,7 +2,9 @@ import os
 
 from dotenv import load_dotenv
 from flask import Flask, g
+from flask.json import JSONEncoder
 from flask_cors import CORS
+import numpy as np
 
 from .db import db
 from .routes import routes
@@ -35,6 +37,19 @@ def create_app():
         SECRET_KEY='dev',
         SQLALCHEMY_DATABASE_URI=database_uri,
     )
+
+    # setup json encoder
+    class NumpyEncoder(JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, np.integer):
+                return int(obj)
+            if isinstance(obj, np.floating):
+                return float(obj)
+            if isinstance(obj, np.ndarray):
+                return obj.tolist()
+            return JSONEncoder.default(self, obj)
+
+    app.json_encoder = NumpyEncoder
 
     # ensure the instance folder exists
     try:

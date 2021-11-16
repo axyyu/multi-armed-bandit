@@ -10,22 +10,42 @@ class SystemTypes(Enum):
     NO_OBSERVE = 'noObserve'  # system can't observe user's reward
 
 
-class ObserveSystem:
+class SerializableSystem:
+    """
+    Enables JSON serialization of systems
+    """
+    @classmethod
+    def deserialize(cls, frozen):
+        return cls(**frozen)
+
+    def serialize(self):
+        return vars(self)
+
+
+class ObserveSystem(SerializableSystem):
     """
     environment 1: system can observe user's reward
     """
 
-    def __init__(self, K, T):
+    def __init__(self, K, T, **kwargs):
         self.K = K  # Total number of arms
         self.T = T  # Total number of interactions
-        self.t = 0  # Current interaction step
-        self.recommend_list = []  # Collected History - recommendation sequence
-        self.decisions = []  # Collected History - user decision sequence, accept : 1, reject : 0
-        self.rewards = []  # Collected History - numerical reward sequence
-        self.pull_counts = np.ones(K) * 1e-6  # Number of pull for each arm
-        self.avg_rewards = np.zeros(K)  # Average reward for each arm
-        self.ucb_scores = np.zeros(K)  # Upper confidence bound for each arm
-        self.rejected_arms = np.zeros(
+        # Current interaction step
+        self.t = kwargs['t'] if 't' in kwargs else 0
+        # Collected History - recommendation sequence
+        self.recommend_list = kwargs['recommend_list'] if 'recommend_list' in kwargs else [
+        ]
+        # Collected History - user decision sequence, accept : 1, reject : 0
+        self.decisions = kwargs['decisions'] if 'decisions' in kwargs else []
+        # Collected History - numerical reward sequence
+        self.rewards = kwargs['rewards'] if 'rewards' in kwargs else []
+        self.pull_counts = np.array(kwargs['pull_counts']) if 'pull_counts' in kwargs else np.ones(
+            K) * 1e-6  # Number of pull for each arm
+        self.avg_rewards = np.array(kwargs['avg_rewards']) if 'avg_rewards' in kwargs else np.zeros(
+            K)  # Average reward for each arm
+        self.ucb_scores = np.array(kwargs['ucb_scores']) if 'ucb_scores' in kwargs else np.zeros(
+            K)  # Upper confidence bound for each arm
+        self.rejected_arms = np.array(kwargs['rejected_arms']) if 'rejected_arms' in kwargs else np.zeros(
             K)  # Mark recently rejected arms with -1. Reset to all 0 whenever recommendation is accepted.
         self.BIG_NUM = 1e6  # Large constant to avoid overflow
 
@@ -80,26 +100,36 @@ class ObserveSystem:
             self.rejected_arms[arm_id] = -1.0
 
 
-class NoObserveSystem:
+class NoObserveSystem(SerializableSystem):
     """
     environment 2: system cannot observe user's reward
     """
 
-    def __init__(self, K, T, N=None):
+    def __init__(self, K, T, N=None, **kwargs):
         self.K = K  # Total number of arms
         self.T = T  # Total number of interactions
         if N is None:  # Length of Phase-1
             self.N = T // 2
         else:
             self.N = min(N, T)
-        self.t = 0  # Current interaction step
-        self.recommend_list = []  # Collected History - recommendation sequence
-        self.decisions = []  # Collected History - user decision sequence, accept : 1, reject : 0
-        self.pull_counts = np.zeros(K)  # Number of pull for each arm
-        self.reject_counts = np.zeros(K)  # Number of rejection for each arm
+
+        # Current interaction step
+        self.t = kwargs['t'] if 't' in kwargs else 0
+        # Collected History - recommendation sequence
+        self.recommend_list = kwargs['recommend_list'] if 'recommend_list' in kwargs else [
+        ]
+        # Collected History - user decision sequence, accept : 1, reject : 0
+        self.decisions = kwargs['decisions'] if 'decisions' in kwargs else []
+        self.pull_counts = np.array(kwargs['pull_counts']) if 'pull_counts' in kwargs else np.zeros(
+            K)  # Number of pull for each arm
+        self.reject_counts = np.array(kwargs['reject_counts']) if 'reject_counts' in kwargs else np.zeros(
+            K)  # Number of rejection for each arm
         # Arms available for recommendation
-        self.candidate_arms = [i for i in range(K)]
-        np.random.shuffle(self.candidate_arms)
+        if 'candidate_arms' in kwargs:
+            self.candidate_arms = kwargs['candidate_arms']
+        else:
+            self.candidate_arms = [i for i in range(K)]
+            np.random.shuffle(self.candidate_arms)
 
     def reset(self):
         self.t = 0

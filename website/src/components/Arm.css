@@ -1,0 +1,18 @@
+.arm {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  margin: 32px;
+  padding: 16px;
+}
+
+.button-row {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+}
+
+button:disabled {
+  opacity: 0.3;
+}

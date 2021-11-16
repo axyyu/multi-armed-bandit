@@ -1,17 +1,4 @@
 @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap");
-$c1: #f72585;
-$c2: #b5179e;
-$c3: #7209b7;
-$c4: #560bad;
-$c5: #480ca8;
-$c6: #3a0ca3;
-$c7: #3f37c9;
-$c8: #4361ee;
-$c9: #4895ef;
-$c10: #4cc9f0;
-
-$black: #1a181f;
-$white: #ffffff;
 
 * {
   font-family: "Source Sans Pro", sans-serif;
@@ -19,8 +6,8 @@ $white: #ffffff;
 }
 
 html {
-  color: $black;
-  background: $white;
+  color: black;
+  background: white;
 }
 
 body {
@@ -43,7 +30,7 @@ h5 {
 }
 
 input {
-  border: 1px solid $c10;
+  border: 1px solid gray;
   border-radius: 8px;
 
   padding: 16px 8px;
@@ -61,23 +48,19 @@ input {
   flex-wrap: wrap;
 }
 
-.arm {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  align-items: center;
-  margin: 32px;
-  padding: 16px;
-}
-
 button {
-  background: $c10;
+  background: #4cc9f0;
   border-radius: 16px;
   padding: 16px 32px;
   font-size: 18px;
   border: none;
   cursor: pointer;
   margin: 16px 0;
+}
+
+.outline {
+  border: 1px solid #4cc9f0;
+  background-color: white;
 }
 
 .placeholder {
