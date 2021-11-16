@@ -1,4 +1,4 @@
-from flask import jsonify, render_template, request
+from flask import jsonify, send_from_directory, request, current_app
 from server.algorithms import NoObserveSystem, ObserveSystem, SystemTypes
 
 from .db import db
@@ -10,7 +10,8 @@ Controllers
 
 
 def home():
-    return render_template('index.html')
+    print(current_app.static_folder)
+    return send_from_directory(current_app.static_folder, 'index.html')
 
 
 def start():

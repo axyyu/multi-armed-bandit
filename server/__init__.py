@@ -19,7 +19,8 @@ load_dotenv()
 
 
 def create_app():
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(__name__, instance_relative_config=True,
+                static_url_path='', static_folder='../website/build')
 
     database_uri = "sqlite:///{}".format(
         os.path.join(app.instance_path, 'app.sqlite'))
