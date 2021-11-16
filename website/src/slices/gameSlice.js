@@ -77,7 +77,9 @@ export const gameSlice = createSlice({
       state.totalReward += reward;
 
       // update arm history
-      state.arms[armId].history = [...state.arms[armId].history, reward];
+      if (decision === 1) {
+        state.arms[armId].history = [...state.arms[armId].history, reward];
+      }
 
       state.lastChoice = {
         armId: armId,

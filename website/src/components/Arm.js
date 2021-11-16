@@ -23,10 +23,15 @@ function Arm({
   const color = colors[index % colors.length];
 
   const gameOver = game.budget <= 0;
+  const armAverage =
+    arm.history.length > 0
+      ? (arm.history.reduce((a, b) => a + b, 0) / arm.history.length).toFixed(4)
+      : "N/A";
 
   return (
     <div className="arm">
       <h1>Arm {index}</h1>
+      <h4>Average: {armAverage}</h4>
       <Histogram data={arm.history} color={color} />
       {useDecision ? (
         game.recommendedArm === index && (

@@ -46,17 +46,9 @@ function SetupLayout() {
       </div>
       <div>
         <h2>Game Type</h2>
-        <TypeButton type={"base"} title="Base Game" />
-        <TypeButton
-          type={"observe"}
-          title="
-          Observe"
-        />
-        <TypeButton
-          type={"noObserve"}
-          title="
-          No Observe"
-        />
+        <TypeButton type={"base"} title="Multi-armed Bandit" />
+        <TypeButton type={"observe"} title="Multi-armed Cooperative Bandit" />
+        <TypeButton type={"noObserve"} title="BAIR" />
       </div>
       <button onClick={() => dispatch(setSetup(false))}>Start Game</button>
     </div>

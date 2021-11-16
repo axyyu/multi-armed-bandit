@@ -2,8 +2,8 @@ const API = {
   setup: async (gameType, numArms, numInteractions) => {
     const payload = {
       gameType: gameType,
-      numArms: numArms,
-      numInteractions: numInteractions,
+      numArms: parseInt(numArms),
+      numInteractions: parseInt(numInteractions),
     };
     console.log(payload);
     const res = await fetch("/api/start", {
@@ -36,9 +36,9 @@ const API = {
     const payload = {
       gameType: gameType,
       game: systemState,
-      armId: armId,
-      reward: reward,
-      decision: decision, // 1 if selected 0 if not
+      armId: parseInt(armId),
+      reward: parseFloat(reward),
+      decision: parseInt(decision), // 1 if selected 0 if not
     };
     console.log(payload);
     const res = await fetch("/api/record", {
