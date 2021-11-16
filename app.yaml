@@ -1,0 +1,4 @@
+#app.yaml
+
+# Standard - F4 didn't have enough ram
+runtime: python39
