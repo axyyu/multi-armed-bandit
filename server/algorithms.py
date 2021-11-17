@@ -184,7 +184,8 @@ class NoObserveSystem(SerializableSystem):
         else:
             # if rejected, update reject_counts
             self.reject_counts[arm_id] += 1
-            self.candidate_arms.remove(arm_id)
+            if arm_id in self.candidate_arms:
+                self.candidate_arms.remove(arm_id)
 
 
 # test
