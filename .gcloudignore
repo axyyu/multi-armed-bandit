@@ -19,6 +19,7 @@ __pycache__/
 /setup.cfg
 /env
 /instance
+.env
 
 /website/src
 /website/node_modules
