@@ -1,8 +1,8 @@
-from flask import jsonify, send_from_directory, request, current_app
+from flask import current_app, jsonify, request, send_from_directory
+
 from server.algorithms import NoObserveSystem, ObserveSystem, SystemTypes
 
 from .db import db
-from .models.Score import Score
 
 """
 Controllers

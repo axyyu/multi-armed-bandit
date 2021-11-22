@@ -16,3 +16,7 @@
 button:disabled {
   opacity: 0.3;
 }
+
+.reward {
+  height: 32px;
+}

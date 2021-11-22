@@ -1,4 +1,4 @@
 #app.yaml
 
-# Standard - F4 didn't have enough ram
 runtime: python39
+entrypoint: gunicorn -b :$PORT app:app

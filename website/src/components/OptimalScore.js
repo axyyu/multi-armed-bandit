@@ -8,11 +8,11 @@ function OptimalScore() {
   const maxScore = app.T * armMax;
   const maxArmIndex = armMeans.indexOf(armMax);
 
-  return game.budget <= 0 ? (
+  return (
     <h2>
       Optimial Cumulative Reward: {maxScore.toFixed(4)} with Arm {maxArmIndex}
     </h2>
-  ) : null;
+  );
 }
 
 export default OptimalScore;

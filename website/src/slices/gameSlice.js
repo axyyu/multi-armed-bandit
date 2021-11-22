@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import Prob from "prob.js";
 import API from "../utils/api";
 
@@ -11,6 +11,8 @@ const initialState = {
   systemState: null, // serialized system state
   arms: [], // state of individual arms,
   recommendedArm: null, // if arm is recommended
+  gameOver: false,
+  bestArmId: false,
 };
 
 export const setup = createAsyncThunk("setup", async (_, thunkAPI) => {
@@ -45,21 +47,46 @@ export const record = createAsyncThunk("record", async (payload, thunkAPI) => {
   return res;
 });
 
+export const markBestArm = createAsyncThunk(
+  "markBestArm",
+  async (payload, thunkAPI) => {
+    // const state = thunkAPI.getState();
+    return {
+      armId: payload.armId,
+    };
+  }
+);
+
+function atLeastOneLessThanZero(arms) {
+  // if one arm's mean - stdDev is less than 0
+  return arms.some((arm) => arm.mean - arm.stdDev < 0);
+}
+
+function randomArm() {
+  // returns empty arm
+  const U = Prob.uniform(0, 1);
+  return {
+    mean: U(),
+    stdDev: U(),
+    history: [],
+  };
+}
+
 export const gameSlice = createSlice({
   name: "game",
   initialState: initialState,
   reducers: {
     init: (_, action) => {
       // initializes game state and generates arms
-      const U = Prob.uniform(0, 1);
-
       const arms = [];
       for (let i = 0; i < action.payload.K; i++) {
-        arms.push({
-          mean: U(),
-          stdDev: U(),
-          history: [],
-        });
+        arms.push(randomArm());
+      }
+
+      // guarantees that at least one arm's mean - stdDev is smaller than zero
+      while (!atLeastOneLessThanZero(arms)) {
+        arms.pop(); // remove one arm
+        arms.push(randomArm());
       }
 
       return {
@@ -107,6 +134,14 @@ export const gameSlice = createSlice({
 
         state.recommendedArm = recommend;
         state.systemState = game;
+      }
+    });
+    builder.addCase(markBestArm.fulfilled, (state, action) => {
+      if (action.payload) {
+        const { armId } = action.payload;
+
+        state.bestArmId = armId;
+        state.gameOver = true;
       }
     });
   },
