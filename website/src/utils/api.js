@@ -1,7 +1,9 @@
 const API = {
-  setup: async (gameType, numArms, numInteractions) => {
+  setup: async (userId, arms, gameType, numArms, numInteractions) => {
     const payload = {
-      gameType: gameType,
+      userId,
+      arms,
+      gameType,
       numArms: parseInt(numArms),
       numInteractions: parseInt(numInteractions),
     };
@@ -16,13 +18,26 @@ const API = {
     const data = await res.json();
     return data;
   },
-  recommend: async (gameType, systemState) => {
+  record: async (
+    gameId,
+    lastRecommend,
+    gameType,
+    systemState,
+    armId,
+    reward,
+    decision
+  ) => {
     const payload = {
-      gameType: gameType,
+      gameId,
+      lastRecommend,
+      gameType,
       game: systemState,
+      armId: parseInt(armId),
+      reward: parseFloat(reward),
+      decision: parseInt(decision), // 1 if selected 0 if not
     };
     console.log(payload);
-    const res = await fetch("/api/recommend", {
+    const res = await fetch("/api/record", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -32,16 +47,14 @@ const API = {
     const data = await res.json();
     return data;
   },
-  record: async (gameType, systemState, armId, reward, decision) => {
+  score: async (gameId, finalScore, bestArmGuess) => {
     const payload = {
-      gameType: gameType,
-      game: systemState,
-      armId: parseInt(armId),
-      reward: parseFloat(reward),
-      decision: parseInt(decision), // 1 if selected 0 if not
+      gameId,
+      finalScore,
+      bestArmGuess,
     };
     console.log(payload);
-    const res = await fetch("/api/record", {
+    const res = await fetch("/api/score", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

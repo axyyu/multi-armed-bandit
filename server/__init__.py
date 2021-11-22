@@ -7,8 +7,8 @@ from flask.json import JSONEncoder
 from flask_cors import CORS
 from flask_migrate import Migrate
 
-from . import models  # needed for migrations
 from .db import db
+from .models import *  # needed for migrations
 from .routes import routes
 
 load_dotenv()

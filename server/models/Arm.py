@@ -9,7 +9,7 @@ class Arm(db.Model):
 
     game_id = db.Column(db.Integer, db.ForeignKey('game.id'))
     game = db.relationship('Game',
-                           backref=db.backref('queries', lazy=True))
+                           backref=db.backref('arms', lazy=True))
 
     index = db.Column(db.Integer)
     mean = db.Column(db.Float)

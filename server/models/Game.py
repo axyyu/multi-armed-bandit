@@ -9,9 +9,9 @@ class Game(db.Model):
 
     user_id = db.Column(db.String(256), db.ForeignKey('user.id'))
     user = db.relationship('User',
-                           backref=db.backref('queries', lazy=True))
+                           backref=db.backref('games', lazy=True))
 
-    game_type = db.Column(db.String(256))  # BASE, OBSERVE, NOOBSERVE
+    game_type = db.Column(db.String(256))  # base, observe, noObserve
 
     final_score = db.Column(db.Integer)
     best_arm_guess = db.Column(db.Integer)

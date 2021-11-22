@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import Prob from "prob.js";
 import API from "../utils/api";
+import { getUserId } from "../utils/id";
 
 const initialState = {
   ready: false,
@@ -13,24 +14,26 @@ const initialState = {
   recommendedArm: null, // if arm is recommended
   gameOver: false,
   bestArmId: false,
+  gameId: null,
 };
 
 export const setup = createAsyncThunk("setup", async (_, thunkAPI) => {
   const state = thunkAPI.getState();
   const { K, T, gameType } = state.app;
+  const arms = createArms(K);
 
-  thunkAPI.dispatch(init({ K, T }));
+  thunkAPI.dispatch(init({ K, T, arms }));
 
-  if (gameType === "base") return;
+  const userId = getUserId();
 
-  const res = await API.setup(gameType, K, T);
+  const res = await API.setup(userId, arms, gameType, K, T);
   return res;
 });
 
 export const record = createAsyncThunk("record", async (payload, thunkAPI) => {
   const state = thunkAPI.getState();
   const { gameType } = state.app;
-  const { arms, systemState } = state.game;
+  const { arms, systemState, gameId, recommendedArm } = state.game;
   const { armId, decision } = payload;
 
   // Calculate reward
@@ -41,21 +44,26 @@ export const record = createAsyncThunk("record", async (payload, thunkAPI) => {
   // Update state
   thunkAPI.dispatch(move({ armId, decision, reward }));
 
-  if (gameType === "base") return;
-
-  const res = await API.record(gameType, systemState, armId, reward, decision);
+  const res = await API.record(
+    gameId,
+    recommendedArm,
+    gameType,
+    systemState,
+    armId,
+    reward,
+    decision
+  );
   return res;
 });
 
-export const markBestArm = createAsyncThunk(
-  "markBestArm",
-  async (payload, thunkAPI) => {
-    // const state = thunkAPI.getState();
-    return {
-      armId: payload.armId,
-    };
-  }
-);
+export const score = createAsyncThunk("score", async (payload, thunkAPI) => {
+  const state = thunkAPI.getState();
+  const { gameId, totalReward } = state.game;
+  const bestArmGuess = payload.armId;
+
+  const res = await API.score(gameId, totalReward, bestArmGuess);
+  return res;
+});
 
 function atLeastOneLessThanZero(arms) {
   // if one arm's mean - stdDev is less than 0
@@ -72,28 +80,31 @@ function randomArm() {
   };
 }
 
+function createArms(K) {
+  // initializes game state and generates arms
+  const arms = [];
+  for (let i = 0; i < K; i++) {
+    arms.push(randomArm());
+  }
+
+  // guarantees that at least one arm's mean - stdDev is smaller than zero
+  while (!atLeastOneLessThanZero(arms)) {
+    arms.pop(); // remove one arm
+    arms.push(randomArm());
+  }
+  return arms;
+}
+
 export const gameSlice = createSlice({
   name: "game",
   initialState: initialState,
   reducers: {
     init: (_, action) => {
-      // initializes game state and generates arms
-      const arms = [];
-      for (let i = 0; i < action.payload.K; i++) {
-        arms.push(randomArm());
-      }
-
-      // guarantees that at least one arm's mean - stdDev is smaller than zero
-      while (!atLeastOneLessThanZero(arms)) {
-        arms.pop(); // remove one arm
-        arms.push(randomArm());
-      }
-
       return {
         ...initialState,
         numArms: action.payload.K,
         budget: action.payload.T,
-        arms: arms,
+        arms: action.payload.arms,
       };
     },
     move: (state, action) => {
@@ -120,29 +131,25 @@ export const gameSlice = createSlice({
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(setup.fulfilled, (state, action) => {
-      if (action.payload) {
-        const { recommend, game } = action.payload;
+      const { gameId, recommend, game } = action.payload;
 
-        state.recommendedArm = recommend;
-        state.systemState = game;
-      }
+      state.recommendedArm = recommend;
+      state.systemState = game;
+      state.gameId = gameId;
       state.ready = true;
     });
     builder.addCase(record.fulfilled, (state, action) => {
-      if (action.payload) {
-        const { recommend, game } = action.payload;
+      const { recommend, game } = action.payload;
 
-        state.recommendedArm = recommend;
-        state.systemState = game;
-      }
+      state.recommendedArm = recommend;
+      state.systemState = game;
     });
-    builder.addCase(markBestArm.fulfilled, (state, action) => {
-      if (action.payload) {
-        const { armId } = action.payload;
+    builder.addCase(score.fulfilled, (state, action) => {
+      const { armId } = action.payload;
 
-        state.bestArmId = armId;
-        state.gameOver = true;
-      }
+      state.bestArmId = armId;
+      state.gameOver = true;
+      state.lastChoice = null;
     });
   },
 });

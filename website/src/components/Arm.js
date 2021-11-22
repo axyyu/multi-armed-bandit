@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { markBestArm, record } from "../slices/gameSlice";
+import { record, score } from "../slices/gameSlice";
 import "./Arm.css";
 import Histogram from "./Histogram";
 
@@ -35,7 +35,7 @@ function Arm({ arm, index }) {
   }
 
   function selectBestArm() {
-    dispatch(markBestArm({ armId: index }));
+    dispatch(score({ armId: index }));
   }
 
   const armStyle = {
