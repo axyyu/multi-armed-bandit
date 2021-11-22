@@ -142,3 +142,15 @@ def leaderboard():
     #     "scores": scores
     # })
     return True
+
+
+def download():
+    """
+    Download logged data
+    """
+
+    data = ""
+
+    # Game.query.all()
+
+    return data

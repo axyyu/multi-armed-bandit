@@ -14,6 +14,7 @@ const initialState = {
   recommendedArm: null, // if arm is recommended
   gameOver: false,
   bestArmId: false,
+  maxArmId: null,
   gameId: null,
 };
 
@@ -61,8 +62,8 @@ export const score = createAsyncThunk("score", async (payload, thunkAPI) => {
   const { gameId, totalReward } = state.game;
   const bestArmGuess = payload.armId;
 
-  const res = await API.score(gameId, totalReward, bestArmGuess);
-  return res;
+  await API.score(gameId, totalReward, bestArmGuess);
+  return { armId: bestArmGuess };
 });
 
 function atLeastOneLessThanZero(arms) {
@@ -100,11 +101,18 @@ export const gameSlice = createSlice({
   initialState: initialState,
   reducers: {
     init: (_, action) => {
+      const arms = action.payload.arms;
+
+      const armMeans = arms.map((arm) => arm.mean);
+      const armMax = Math.max(...armMeans);
+      const maxArmId = armMeans.indexOf(armMax);
+
       return {
         ...initialState,
         numArms: action.payload.K,
         budget: action.payload.T,
         arms: action.payload.arms,
+        maxArmId: maxArmId,
       };
     },
     move: (state, action) => {

@@ -27,9 +27,11 @@ function Game() {
           ? "Playing game"
           : "Choose the best arm"}
       </h1>
-      {game.gameOver && <OptimalScore />}
+
       <h2>Budget: {game.budget}</h2>
       <h2>Reward: {game.totalReward.toFixed(4)}</h2>
+
+      <OptimalScore />
 
       <div className="row">
         {game.arms.map((arm, index) => (

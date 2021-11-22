@@ -44,7 +44,15 @@ function Arm({ arm, index }) {
   };
 
   return (
-    <div className="arm">
+    <div
+      className={`arm ${
+        game.gameOver && game.bestArmId === index
+          ? game.bestArmId === game.maxArmId
+            ? "correct"
+            : "incorrect"
+          : null
+      }`}
+    >
       <h1>Arm {index}</h1>
       <h4>Average: {armAverage}</h4>
       <Histogram data={arm.history} color={color} />
@@ -54,12 +62,14 @@ function Arm({ arm, index }) {
           : ""}
       </p>
 
-      {game.gameOver ? null : chooseBestArm ? (
+      {game.gameOver ? (
+        <div className="button-placeholder" />
+      ) : chooseBestArm ? (
         <button onClick={() => selectBestArm()} style={armStyle}>
           Best Arm {index}
         </button>
       ) : useDecisionActions ? (
-        game.recommendedArm === index && (
+        game.recommendedArm === index ? (
           <div className="button-row">
             <button onClick={() => move(1)} style={armStyle}>
               Yes
@@ -68,6 +78,8 @@ function Arm({ arm, index }) {
               No
             </button>
           </div>
+        ) : (
+          <div className="button-placeholder" />
         )
       ) : (
         <button onClick={() => move(1)} style={armStyle}>

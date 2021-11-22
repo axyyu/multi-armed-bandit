@@ -28,9 +28,9 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True,
                 static_url_path='', static_folder='../website/build')
 
-    if(USE_PROXY):
+    if(USE_PROXY == "true"):
         database_uri = f"mysql+pymysql://{DB_USER}:{DB_PASS}@localhost:3306/{DB_NAME}"
-    elif(FLASK_ENV == "development"):
+    if(FLASK_ENV == "development"):
         database_uri = "sqlite:///{}".format(
             os.path.join(app.instance_path, 'app.sqlite'))
     else:
