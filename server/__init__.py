@@ -63,7 +63,7 @@ def create_app():
 
     db.init_app(app)
     CORS(app)
-    Migrate(app, db)
+    Migrate(app, db, compare_type=True)
     app.register_blueprint(routes)
 
     return app
