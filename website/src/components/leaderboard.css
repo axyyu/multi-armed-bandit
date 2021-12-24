@@ -1,10 +1,23 @@
 .leaderboard {
   display: flex;
   flex-direction: column;
+  margin: 32px 0;
 }
 
 .leaderboard-row {
-  display: flex;
+  display: grid;
+  padding: 0 16px;
+  grid-template-columns: 32px 1fr auto;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid grey;
+}
+
+.leaderboard-row:nth-child(even) {
+  background-color: rgb(241, 241, 241);
+}
+
+.from-current-game {
+  background-color: #4cc9f0 !important;
 }

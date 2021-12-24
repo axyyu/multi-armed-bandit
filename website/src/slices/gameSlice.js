@@ -12,10 +12,12 @@ const initialState = {
   systemState: null, // serialized system state
   arms: [], // state of individual arms,
   recommendedArm: null, // if arm is recommended
-  gameOver: false,
-  bestArmId: false,
-  maxArmId: null,
-  gameId: null,
+  gameOver: false, // if game is ended
+  bestArmId: false, // user selected best arm for the current game
+  maxArmId: null, // calculated best arm from means
+  gameId: null, // game identifier
+  showLeaderboard: false, // if show leaderboard
+  topScores: [], // leaderboard info
 };
 
 export const setup = createAsyncThunk("setup", async (_, thunkAPI) => {
@@ -65,6 +67,17 @@ export const score = createAsyncThunk("score", async (payload, thunkAPI) => {
   await API.score(gameId, totalReward, bestArmGuess);
   return { armId: bestArmGuess };
 });
+
+export const getLeaderboard = createAsyncThunk(
+  "getLeaderboard",
+  async (_, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const { gameType } = state.app;
+
+    const res = await API.leaderboard(gameType);
+    return res;
+  }
+);
 
 function atLeastOneLessThanZero(arms) {
   // if one arm's mean - stdDev is less than 0
@@ -158,6 +171,12 @@ export const gameSlice = createSlice({
       state.bestArmId = armId;
       state.gameOver = true;
       state.lastChoice = null;
+    });
+    builder.addCase(getLeaderboard.fulfilled, (state, action) => {
+      const { scores } = action.payload;
+
+      state.topScores = scores;
+      state.showLeaderboard = true;
     });
   },
 });

@@ -64,5 +64,20 @@ const API = {
     const data = await res.json();
     return data;
   },
+  leaderboard: async (gameType) => {
+    const payload = {
+      gameType,
+    };
+    console.log(payload);
+    const res = await fetch("/api/leaderboard", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    return data;
+  },
 };
 export default API;

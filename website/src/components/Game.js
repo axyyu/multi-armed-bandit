@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setSetup } from "../slices/appSlice";
 import { setup } from "../slices/gameSlice";
 import Arm from "./Arm";
+import Leaderboard from "./Leaderboard";
 import OptimalScore from "./OptimalScore";
 
 function Game() {
@@ -32,6 +33,8 @@ function Game() {
       <h2>Reward: {game.totalReward.toFixed(4)}</h2>
 
       <OptimalScore />
+
+      <Leaderboard />
 
       <div className="row">
         {game.arms.map((arm, index) => (

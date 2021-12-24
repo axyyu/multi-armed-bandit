@@ -141,6 +141,7 @@ def leaderboard():
 
     scores = [
         {'userId': game.user.id,
+         'gameId': game.id,
          'score': game.final_score,
          } for game in
         Game.query.filter_by(game_type=game_type.value).order_by(
