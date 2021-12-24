@@ -136,21 +136,84 @@ def leaderboard():
     """
     Return existing top scores
     """
-    # scores = Score.query.limit(10).all()
+    req = request.get_json()
+    game_type = SystemTypes(req['gameType'])
 
-    # return jsonify({
-    #     "scores": scores
-    # })
-    return True
+    scores = [
+        {'userId': game.user.id,
+         'score': game.final_score,
+         } for game in
+        Game.query.filter_by(game_type=game_type.value).order_by(
+            Game.final_score.desc()).limit(10)
+    ]
+
+    return jsonify({
+        "scores": scores
+    })
 
 
 def download():
     """
     Download logged data
+
+    Format is described below
+
+    games: [
+        profile {
+            id: string
+        }
+
+        game {
+            startTime: timestamp in milliseconds
+            gameId: string
+            type: type of game
+            finalScore: number
+            arms: [
+                u: mean of arm
+                sd: std dev of arm
+            ]
+        }
+
+        history: [
+            time: timestamp in milliseconds
+            recommendation: int or null
+            action: int or null (if not base game, null means arm was rejected)
+            reward: number or null (if user rejects recommendation)
+        ]
+    ]
     """
 
-    data = ""
+    games = []
 
-    # Game.query.all()
+    for gameDb in Game.query.all():
+        profile_data = {
+            'id': gameDb.user.id
+        }
 
-    return data
+        game_data = {
+            'startTime': gameDb.created_at.timestamp() * 1000,  # ms since epoch
+            'gameId': gameDb.id,
+            'type': gameDb.game_type,
+            'finalScore': gameDb.final_score,
+            'arms': [{
+                'u': arm.mean,
+                'sd': arm.variance ** .5
+            } for arm in gameDb.arms]
+        }
+
+        history_data = [
+            {
+                'time': round.created_at.timestamp() * 1000,
+                'recommendation': round.recommendation,
+                'action': round.arm_choice,
+                'reward': round.observed_reward
+            } for round in gameDb.rounds
+        ]
+
+        games.append({
+            'profile': profile_data,
+            'game': game_data,
+            'history': history_data
+        })
+
+    return jsonify(games)

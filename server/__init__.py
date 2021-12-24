@@ -30,7 +30,7 @@ def create_app():
 
     if(USE_PROXY == "true"):
         database_uri = f"mysql+pymysql://{DB_USER}:{DB_PASS}@localhost:3306/{DB_NAME}"
-    if(FLASK_ENV == "development"):
+    elif(FLASK_ENV == "development"):
         database_uri = "sqlite:///{}".format(
             os.path.join(app.instance_path, 'app.sqlite'))
     else:

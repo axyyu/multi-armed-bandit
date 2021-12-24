@@ -1,0 +1,10 @@
+.leaderboard {
+  display: flex;
+  flex-direction: column;
+}
+
+.leaderboard-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
