@@ -13,5 +13,5 @@ class Game(db.Model):
 
     game_type = db.Column(db.String(256))  # base, observe, noObserve
 
-    final_score = db.Column(db.Integer)
+    final_score = db.Column(db.Float)
     best_arm_guess = db.Column(db.Integer)
