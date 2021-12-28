@@ -12,4 +12,4 @@ routes.route("/api/record", methods=["POST"])(record)
 routes.route("/api/leaderboard", methods=["POST"])(leaderboard)
 routes.route("/api/score", methods=["POST"])(score)
 
-routes.route("/download", methods=["GET"])(download)
+routes.route("/34down56", methods=["GET"])(download)
