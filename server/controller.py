@@ -87,7 +87,8 @@ def record():
     game_round = GameRound(game=game_obj,
                            arm_choice=arm_choice,
                            recommendation=last_recommend,
-                           observed_reward=reward)
+                           observed_reward=reward,
+                           round_number=len(game_obj.rounds))
     db.session.add(game_round)
     db.session.commit()
 
@@ -207,7 +208,8 @@ def download():
                 'time': round.created_at.timestamp() * 1000,
                 'recommendation': round.recommendation,
                 'action': round.arm_choice,
-                'reward': round.observed_reward
+                'reward': round.observed_reward,
+                'round': round.round_number
             } for round in gameDb.rounds
         ]
 

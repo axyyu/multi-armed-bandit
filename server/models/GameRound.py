@@ -14,3 +14,5 @@ class GameRound(db.Model):
     arm_choice = db.Column(db.Integer)
     recommendation = db.Column(db.Integer, nullable=True)
     observed_reward = db.Column(db.Float, nullable=True)
+
+    round_number = db.Column(db.Integer)
